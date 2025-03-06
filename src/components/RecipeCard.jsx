@@ -1,11 +1,4 @@
-import {
-  Heart,
-  HeartPulse,
-  ChefHat,
-  WheatOff,
-  Wheat,
-  Drumstick,
-} from "lucide-react";
+import { Heart, ChefHat, WheatOff, Wheat } from "lucide-react";
 import React, { useState } from "react";
 
 const RecipeCard = ({ recipe, bg, badge }) => {
@@ -27,6 +20,10 @@ const RecipeCard = ({ recipe, bg, badge }) => {
     }
     localStorage.setItem("favorites", JSON.stringify(favorites));
   };
+  useEffect(() => {
+    const storedFavorites = JSON.parse(localStorage.getItem("favorites")) || [];
+    setIsFavorite(storedFavorites);
+  }, []);
 
   useEffect(() => {
     const storedFavorites = JSON.parse(localStorage.getItem("favorites")) || [];
@@ -43,14 +40,6 @@ const RecipeCard = ({ recipe, bg, badge }) => {
     "Rye",
     "Cracker",
   ];
-  const unhealthyIngredients = [
-    "butter",
-    "cream",
-    "bacon",
-    "fried",
-    "sausage",
-    "cheese",
-  ];
 
   const isGlutenFree = (recipe) => {
     for (let i = 1; i <= 20; i++) {
@@ -63,19 +52,6 @@ const RecipeCard = ({ recipe, bg, badge }) => {
       }
     }
     return true; // Gluten-free
-  };
-
-  const isHeartHealthy = (recipe) => {
-    for (let i = 1; i <= 20; i++) {
-      const ingredient = recipe[`strIngredient${i}`]?.toLowerCase();
-      if (
-        ingredient &&
-        unhealthyIngredients.some((item) => ingredient.includes(item))
-      ) {
-        return false; // Not heart-healthy
-      }
-    }
-    return true; // Heart-healthy
   };
 
   const glutenFreeLabel = isGlutenFree(recipe)
@@ -149,22 +125,6 @@ const RecipeCard = ({ recipe, bg, badge }) => {
             </span>
           </div>
         )}
-
-        {/* {heartHealthyLabel === "Heart-Healthy" ? (
-          <div className="flex gap-1 bg-[#d6f497] items-center p-1 rounded-md">
-            <HeartPulse size={16} />
-            <span className="text-sm tracking-tighter font-semibold">
-              {heartHealthyLabel}
-            </span>
-          </div>
-        ) : (
-          <div className="flex gap-1 bg-[#d6f497] items-center p-1 rounded-md">
-            <Drumstick size={16} />
-            <span className="text-sm tracking-tighter font-semibold">
-              {heartHealthyLabel}
-            </span>
-          </div>
-        )} */}
       </div>
     </div>
   );
