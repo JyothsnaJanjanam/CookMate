@@ -21,6 +21,10 @@ const RecipeCard = ({ recipe, bg, badge }) => {
     localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
   };
 
+  useEffect(() => {
+    const storedFavorites = JSON.parse(localStorage.getItem("favorites")) || [];
+    setFavorites(storedFavorites);
+  }, [favorites]);
   // const addRecipeToFavorites = () => {
   //   let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
   //   const isRecipeAlreadyInFavorites = favorites.some(
