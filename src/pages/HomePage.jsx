@@ -12,6 +12,13 @@ const HomePage = () => {
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [cuisine, setCuisine] = useState("");
+  const [favorites, setFavorites] = useState(
+    JSON.parse(localStorage.getItem("favorites")) || []
+  );
+
+  useEffect(() => {
+    localStorage.setItem("favorites", JSON.stringify(favorites));
+  }, [favorites]);
 
   const fetchRecipes = async () => {
     setLoading(true);
@@ -19,7 +26,6 @@ const HomePage = () => {
     try {
       const { data } = await axios(allMealsUrl);
       if (data) {
-        // console.log(data.meals);
         setRecipes(data.meals); // Now includes full details
       } else {
         console.error("No results found:", data);
@@ -70,8 +76,16 @@ const HomePage = () => {
     }
   };
 
+  const toggleFavorite = (recipeId) => {
+    setFavorites((prevFavorites) =>
+      prevFavorites.includes(recipeId)
+        ? prevFavorites.filter((id) => id !== recipeId)
+        : [...prevFavorites, recipeId]
+    );
+  };
+
   useEffect(() => {
-    fetchRecipes("bread");
+    fetchRecipes();
   }, []);
 
   return (
@@ -100,7 +114,13 @@ const HomePage = () => {
         <div className="grid gap-3 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           {!loading &&
             recipes.map((meal, index) => (
-              <RecipeCard key={index} recipe={meal} {...getRandomColor()} />
+              <RecipeCard
+                key={index}
+                recipe={meal}
+                isFavorite={favorites.includes(meal.idMeal)}
+                toggleFavorite={toggleFavorite}
+                {...getRandomColor()}
+              />
             ))}
 
           {loading &&

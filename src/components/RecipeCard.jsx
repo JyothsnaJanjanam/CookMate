@@ -1,48 +1,28 @@
 import { Heart, ChefHat, WheatOff, Wheat } from "lucide-react";
 import React, { useState, useEffect } from "react";
 
-const RecipeCard = ({ recipe, bg, badge }) => {
-  const storedFavorites = JSON.parse(localStorage.getItem("favorites")) || [];
-  const [favorites, setFavorites] = useState(storedFavorites);
+const RecipeCard = ({ recipe, bg, badge, isFavorite, toggleFavorite }) => {
+  const [isFav, setIsFav] = useState(
+    JSON.parse(localStorage.getItem("favorites"))?.some(
+      (fav) => fav.strMeal === recipe.strMeal
+    ) || false
+  );
 
-  const isFavorite = favorites.some((fav) => fav.strMeal === recipe.strMeal);
-
-  const toggleFavorite = () => {
-    let updatedFavorites;
-    if (isFavorite) {
-      updatedFavorites = favorites.filter(
-        (fav) => fav.strMeal !== recipe.strMeal
-      );
+  const addRecipeToFavorites = () => {
+    let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+    const isRecipeAlreadyInFavorites = favorites.some(
+      (fav) => fav.strMeal === recipe.strMeal
+    );
+    if (isRecipeAlreadyInFavorites) {
+      favorites = favorites.filter((fav) => fav.strMeal !== recipe.strMeal);
+      setIsFav(false);
     } else {
-      updatedFavorites = [...favorites, recipe];
+      favorites.push(recipe);
+      setIsFav(true);
     }
-
-    setFavorites(updatedFavorites);
-    localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
+    localStorage.setItem("favorites", JSON.stringify(favorites));
+    toggleFavorite();
   };
-
-  useEffect(() => {
-    const storedFavorites = JSON.parse(localStorage.getItem("favorites")) || [];
-    setFavorites(storedFavorites);
-  }, [favorites]);
-  // const addRecipeToFavorites = () => {
-  //   let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
-  //   const isRecipeAlreadyInFavorites = favorites.some(
-  //     (fav) => fav.strMeal === recipe.strMeal
-  //   );
-  //   if (isRecipeAlreadyInFavorites) {
-  //     favorites = favorites.filter((fav) => fav.strMeal !== recipe.strMeal);
-  //     setIsFavorite(false);
-  //   } else {
-  //     favorites.push(recipe);
-  //     setIsFavorite(true);
-  //   }
-  //   localStorage.setItem("favorites", JSON.stringify(favorites));
-  // };
-  // useEffect(() => {
-  //   const storedFavorites = JSON.parse(localStorage.getItem("favorites")) || [];
-  //   setIsFavorite(storedFavorites);
-  // }, []);
 
   const glutenIngredients = [
     "Wheat",
@@ -105,7 +85,7 @@ const RecipeCard = ({ recipe, bg, badge }) => {
           className="absolute top-1 right-2 bg-white rounded-full p-1 cursor-pointer"
           onClick={(e) => {
             e.preventDefault();
-            toggleFavorite();
+            addRecipeToFavorites();
           }}
         >
           {!isFavorite && (
