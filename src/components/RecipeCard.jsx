@@ -1,27 +1,26 @@
 import { Heart, ChefHat, WheatOff, Wheat } from "lucide-react";
 import React, { useState, useEffect } from "react";
 
-const RecipeCard = ({ recipe, bg, badge, isFavorite, toggleFavorite }) => {
-  const [isFav, setIsFav] = useState(
-    JSON.parse(localStorage.getItem("favorites"))?.some(
-      (fav) => fav.strMeal === recipe.strMeal
-    ) || false
+const RecipeCard = ({ recipe, bg, badge }) => {
+  const [isFavorite, setIsFavorite] = useState(
+    localStorage.getItem("favorites")?.includes(recipe.label)
   );
 
   const addRecipeToFavorites = () => {
     let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
     const isRecipeAlreadyInFavorites = favorites.some(
-      (fav) => fav.strMeal === recipe.strMeal
+      (fav) => fav.label === recipe.label
     );
+
     if (isRecipeAlreadyInFavorites) {
-      favorites = favorites.filter((fav) => fav.strMeal !== recipe.strMeal);
-      setIsFav(false);
+      favorites = favorites.filter((fav) => fav.label !== recipe.label);
+      setIsFavorite(false);
     } else {
       favorites.push(recipe);
-      setIsFav(true);
+      setIsFavorite(true);
     }
+
     localStorage.setItem("favorites", JSON.stringify(favorites));
-    toggleFavorite();
   };
 
   const glutenIngredients = [

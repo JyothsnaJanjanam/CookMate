@@ -11,14 +11,6 @@ const mealDetailsUrl = import.meta.env.VITE_MEAL_DETAILS_URL;
 const HomePage = () => {
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [cuisine, setCuisine] = useState("");
-  const [favorites, setFavorites] = useState(
-    JSON.parse(localStorage.getItem("favorites")) || []
-  );
-
-  useEffect(() => {
-    localStorage.setItem("favorites", JSON.stringify(favorites));
-  }, [favorites]);
 
   const fetchRecipes = async () => {
     setLoading(true);
@@ -51,6 +43,10 @@ const HomePage = () => {
     }
   };
 
+  useEffect(() => {
+    fetchRecipes("bread");
+  }, []);
+
   const handleSearchByCuisine = async (e) => {
     e.preventDefault();
     if (!cuisine) {
@@ -76,17 +72,9 @@ const HomePage = () => {
     }
   };
 
-  const toggleFavorite = (recipeId) => {
-    setFavorites((prevFavorites) =>
-      prevFavorites.includes(recipeId)
-        ? prevFavorites.filter((id) => id !== recipeId)
-        : [...prevFavorites, recipeId]
-    );
-  };
-
-  useEffect(() => {
-    fetchRecipes();
-  }, []);
+  // useEffect(() => {
+  //   fetchRecipes();
+  // }, []);
 
   return (
     <div className="bg-[#faf9fb] p-10 flex-1">
