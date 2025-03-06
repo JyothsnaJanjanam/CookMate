@@ -1,42 +1,165 @@
-import { Heart, HeartPulse, Soup } from "lucide-react";
-import React from "react";
+import {
+  Heart,
+  HeartPulse,
+  ChefHat,
+  WheatOff,
+  Wheat,
+  Drumstick,
+} from "lucide-react";
+import React, { useState } from "react";
 
-const RecipeCard = () => {
+const RecipeCard = ({ recipe, bg, badge }) => {
+  const [isFavorite, setIsFavorite] = useState(
+    localStorage.getItem("favorites")?.includes(recipe.strMeal)
+  );
+
+  const addRecipeToFavorites = () => {
+    let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+    const isRecipeAlreadyInFavorites = favorites.some(
+      (fav) => fav.strMeal === recipe.strMeal
+    );
+    if (isRecipeAlreadyInFavorites) {
+      favorites = favorites.filter((fav) => fav.strMeal !== recipe.strMeal);
+      setIsFavorite(false);
+    } else {
+      favorites.push(recipe);
+      setIsFavorite(true);
+    }
+    localStorage.setItem("favorites", JSON.stringify(favorites));
+  };
+
+  const glutenIngredients = [
+    "Wheat",
+    "Maida",
+    "Flour",
+    "Bread",
+    "Pasta",
+    "Barley",
+    "Rye",
+    "Cracker",
+  ];
+  const unhealthyIngredients = [
+    "butter",
+    "cream",
+    "bacon",
+    "fried",
+    "sausage",
+    "cheese",
+  ];
+
+  const isGlutenFree = (recipe) => {
+    for (let i = 1; i <= 20; i++) {
+      const ingredient = recipe[`strIngredient${i}`]?.toLowerCase();
+      if (
+        ingredient &&
+        glutenIngredients.some((glutenItem) => ingredient.includes(glutenItem))
+      ) {
+        return false; // Contains gluten
+      }
+    }
+    return true; // Gluten-free
+  };
+
+  const isHeartHealthy = (recipe) => {
+    for (let i = 1; i <= 20; i++) {
+      const ingredient = recipe[`strIngredient${i}`]?.toLowerCase();
+      if (
+        ingredient &&
+        unhealthyIngredients.some((item) => ingredient.includes(item))
+      ) {
+        return false; // Not heart-healthy
+      }
+    }
+    return true; // Heart-healthy
+  };
+
+  const glutenFreeLabel = isGlutenFree(recipe)
+    ? "Gluten-free"
+    : "Contains Gluten";
+
   return (
-    <div className="flex flex-col rounded-md bg-[#ecf7d4] overflow-hidden p-3 relative">
-      <a href="#" className="relative h-32">
+    <div
+      className={`flex flex-col rounded-md ${bg} overflow-hidden p-3 relative`}
+    >
+      {/* href={recipe.strYoutube} */}
+      <a
+        href={`https://www.youtube.com/results?search_query=${recipe.strMeal} recipe`}
+        target="_blank"
+        className="relative h-32"
+      >
+        <div className="skeleton absolute inset-0" />
         <img
-          src="/1.jpg"
-          alt="recipe img"
-          className="rounded-md w-full h-full object-cover cursor-pointer"
+          src={recipe.strMealThumb}
+          alt={recipe.strMeal}
+          className="rounded-md w-full h-full object-cover cursor-pointer opacity-0 transition-opacity duration-500"
+          onLoad={(e) => {
+            e.currentTarget.style.opacity = 1;
+            e.currentTarget.previousElementSibling.style.display = "none";
+          }}
         />
-        <div className="absolute bottom-2 left-2 bg-white rounded-full p-1 cursor-pointer flex items-center gap-1 text-sm">
-          <Soup size={16} /> 4 Servings
+        <div
+          className={`absolute bottom-2 left-2 bg-white rounded-full p-1 cursor-pointer flex items-center gap-1 text-sm`}
+        >
+          <ChefHat size={16} />{" "}
+          {recipe.strCategory == "Miscellaneous"
+            ? recipe.strIngredient1
+            : recipe.strCategory}
         </div>
 
-        <div className="absolute top-1 right-2 bg-white rounded-full p-1 cursor-pointer">
-          <Heart size={17} className="hover:fill-red-500 hover:text-red-500" />
+        <div
+          className="absolute top-1 right-2 bg-white rounded-full p-1 cursor-pointer"
+          onClick={(e) => {
+            e.preventDefault();
+            addRecipeToFavorites();
+          }}
+        >
+          {!isFavorite && (
+            <Heart
+              size={17}
+              className="hover:fill-red-500 hover:text-red-500"
+            />
+          )}
+          {isFavorite && (
+            <Heart size={17} className="fill-red-500 text-red-500" />
+          )}
         </div>
       </a>
-
       <div className="flex mt-1">
-        <p className="font-bold tracking-wide">Roasted Chicken</p>
+        <p className="font-bold tracking-wide">{recipe.strMeal}</p>
       </div>
-      <p className="my-2">Turkish Kitchen</p>
-
+      <p className="my-2">{recipe.strArea} Kitchen</p>
       <div className="flex gap-2 mt-auto">
-        <div className="flex gap-1 bg-[#d6f497] items-center p-1 rounded-md">
-          <HeartPulse size={16} />
-          <span className="text-sm tracking-tighter font-semibold">
-            Gluten-free
-          </span>
-        </div>
-        <div className="flex gap-1 bg-[#d6f497] items-center p-1 rounded-md">
-          <HeartPulse size={16} />
-          <span className="text-sm tracking-tighter font-semibold">
-            Heart-healthy
-          </span>
-        </div>
+        {glutenFreeLabel === "Gluten-free" ? (
+          <div className={`flex gap-1 ${badge} items-center p-1 rounded-md`}>
+            <WheatOff size={16} />
+            <span className="text-sm tracking-tighter font-semibold">
+              {glutenFreeLabel}
+            </span>
+          </div>
+        ) : (
+          <div className={`flex gap-1 ${badge} items-center p-1 rounded-md`}>
+            <Wheat size={16} />
+            <span className="text-sm tracking-tighter font-semibold">
+              {glutenFreeLabel}
+            </span>
+          </div>
+        )}
+
+        {/* {heartHealthyLabel === "Heart-Healthy" ? (
+          <div className="flex gap-1 bg-[#d6f497] items-center p-1 rounded-md">
+            <HeartPulse size={16} />
+            <span className="text-sm tracking-tighter font-semibold">
+              {heartHealthyLabel}
+            </span>
+          </div>
+        ) : (
+          <div className="flex gap-1 bg-[#d6f497] items-center p-1 rounded-md">
+            <Drumstick size={16} />
+            <span className="text-sm tracking-tighter font-semibold">
+              {heartHealthyLabel}
+            </span>
+          </div>
+        )} */}
       </div>
     </div>
   );
