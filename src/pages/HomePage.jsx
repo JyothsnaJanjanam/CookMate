@@ -11,6 +11,7 @@ const mealDetailsUrl = import.meta.env.VITE_MEAL_DETAILS_URL;
 const HomePage = () => {
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [cuisine, setCuisine] = useState([]);
 
   const fetchRecipes = async () => {
     setLoading(true);
@@ -102,13 +103,7 @@ const HomePage = () => {
         <div className="grid gap-3 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           {!loading &&
             recipes.map((meal, index) => (
-              <RecipeCard
-                key={index}
-                recipe={meal}
-                isFavorite={favorites.includes(meal.idMeal)}
-                toggleFavorite={toggleFavorite}
-                {...getRandomColor()}
-              />
+              <RecipeCard key={index} recipe={meal} {...getRandomColor()} />
             ))}
 
           {loading &&
