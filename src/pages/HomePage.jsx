@@ -11,7 +11,7 @@ const mealDetailsUrl = import.meta.env.VITE_MEAL_DETAILS_URL;
 const HomePage = () => {
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [cuisine, setCuisine] = useState([]);
+  const [cuisine, setCuisine] = useState("");
 
   const fetchRecipes = async () => {
     setLoading(true);
@@ -19,6 +19,7 @@ const HomePage = () => {
     try {
       const { data } = await axios(allMealsUrl);
       if (data) {
+        // console.log(data.meals);
         setRecipes(data.meals); // Now includes full details
       } else {
         console.error("No results found:", data);
@@ -43,10 +44,6 @@ const HomePage = () => {
       return [];
     }
   };
-
-  useEffect(() => {
-    fetchRecipes("bread");
-  }, []);
 
   const handleSearchByCuisine = async (e) => {
     e.preventDefault();
@@ -73,9 +70,9 @@ const HomePage = () => {
     }
   };
 
-  // useEffect(() => {
-  //   fetchRecipes();
-  // }, []);
+  useEffect(() => {
+    fetchRecipes("bread");
+  }, []);
 
   return (
     <div className="bg-[#faf9fb] p-10 flex-1">

@@ -1,9 +1,10 @@
 import { Heart, ChefHat, WheatOff, Wheat } from "lucide-react";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 const RecipeCard = ({ recipe, bg, badge }) => {
+  console.log(recipe);
   const [isFavorite, setIsFavorite] = useState(
-    localStorage.getItem("favorites")?.includes(recipe.label)
+    localStorage.getItem("favorites")?.includes(recipe.strMeal)
   );
 
   const addRecipeToFavorites = () => {
@@ -45,6 +46,19 @@ const RecipeCard = ({ recipe, bg, badge }) => {
       }
     }
     return true; // Gluten-free
+  };
+
+  const isHeartHealthy = (recipe) => {
+    for (let i = 1; i <= 20; i++) {
+      const ingredient = recipe[`strIngredient${i}`]?.toLowerCase();
+      if (
+        ingredient &&
+        unhealthyIngredients.some((item) => ingredient.includes(item))
+      ) {
+        return false; // Not heart-healthy
+      }
+    }
+    return true; // Heart-healthy
   };
 
   const glutenFreeLabel = isGlutenFree(recipe)
