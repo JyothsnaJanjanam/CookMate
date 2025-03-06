@@ -2,24 +2,39 @@ import { Heart, ChefHat, WheatOff, Wheat } from "lucide-react";
 import React, { useState, useEffect } from "react";
 
 const RecipeCard = ({ recipe, bg, badge }) => {
-  const [isFavorite, setIsFavorite] = useState(
-    localStorage.getItem("favorites")?.includes(recipe.strMeal)
-  );
+  const storedFavorites = JSON.parse(localStorage.getItem("favorites")) || [];
+  const [favorites, setFavorites] = useState(storedFavorites);
 
-  const addRecipeToFavorites = () => {
-    let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
-    const isRecipeAlreadyInFavorites = favorites.some(
-      (fav) => fav.strMeal === recipe.strMeal
-    );
-    if (isRecipeAlreadyInFavorites) {
-      favorites = favorites.filter((fav) => fav.strMeal !== recipe.strMeal);
-      setIsFavorite(false);
+  const isFavorite = favorites.some((fav) => fav.strMeal === recipe.strMeal);
+
+  const toggleFavorite = () => {
+    let updatedFavorites;
+    if (isFavorite) {
+      updatedFavorites = favorites.filter(
+        (fav) => fav.strMeal !== recipe.strMeal
+      );
     } else {
-      favorites.push(recipe);
-      setIsFavorite(true);
+      updatedFavorites = [...favorites, recipe];
     }
-    localStorage.setItem("favorites", JSON.stringify(favorites));
+
+    setFavorites(updatedFavorites);
+    localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
   };
+
+  // const addRecipeToFavorites = () => {
+  //   let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+  //   const isRecipeAlreadyInFavorites = favorites.some(
+  //     (fav) => fav.strMeal === recipe.strMeal
+  //   );
+  //   if (isRecipeAlreadyInFavorites) {
+  //     favorites = favorites.filter((fav) => fav.strMeal !== recipe.strMeal);
+  //     setIsFavorite(false);
+  //   } else {
+  //     favorites.push(recipe);
+  //     setIsFavorite(true);
+  //   }
+  //   localStorage.setItem("favorites", JSON.stringify(favorites));
+  // };
   useEffect(() => {
     const storedFavorites = JSON.parse(localStorage.getItem("favorites")) || [];
     setIsFavorite(storedFavorites);
@@ -86,7 +101,7 @@ const RecipeCard = ({ recipe, bg, badge }) => {
           className="absolute top-1 right-2 bg-white rounded-full p-1 cursor-pointer"
           onClick={(e) => {
             e.preventDefault();
-            addRecipeToFavorites();
+            toggleFavorite();
           }}
         >
           {!isFavorite && (
