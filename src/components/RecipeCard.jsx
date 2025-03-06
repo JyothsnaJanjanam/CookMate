@@ -35,10 +35,10 @@ const RecipeCard = ({ recipe, bg, badge }) => {
   //   }
   //   localStorage.setItem("favorites", JSON.stringify(favorites));
   // };
-  useEffect(() => {
-    const storedFavorites = JSON.parse(localStorage.getItem("favorites")) || [];
-    setIsFavorite(storedFavorites);
-  }, []);
+  // useEffect(() => {
+  //   const storedFavorites = JSON.parse(localStorage.getItem("favorites")) || [];
+  //   setIsFavorite(storedFavorites);
+  // }, []);
 
   const glutenIngredients = [
     "Wheat",
