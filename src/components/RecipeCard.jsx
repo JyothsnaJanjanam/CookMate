@@ -25,11 +25,6 @@ const RecipeCard = ({ recipe, bg, badge }) => {
     setIsFavorite(storedFavorites);
   }, []);
 
-  useEffect(() => {
-    const storedFavorites = JSON.parse(localStorage.getItem("favorites")) || [];
-    setIsFavorite(storedFavorites);
-  }, []);
-
   const glutenIngredients = [
     "Wheat",
     "Maida",
