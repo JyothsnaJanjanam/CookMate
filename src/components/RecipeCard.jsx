@@ -9,11 +9,11 @@ const RecipeCard = ({ recipe, bg, badge }) => {
   const addRecipeToFavorites = () => {
     let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
     const isRecipeAlreadyInFavorites = favorites.some(
-      (fav) => fav.label === recipe.label
+      (fav) => fav.idMeal === recipe.idMeal
     );
 
     if (isRecipeAlreadyInFavorites) {
-      favorites = favorites.filter((fav) => fav.label !== recipe.label);
+      favorites = favorites.filter((fav) => fav.idMeal !== recipe.idMeal);
       setIsFavorite(false);
     } else {
       favorites.push(recipe);
