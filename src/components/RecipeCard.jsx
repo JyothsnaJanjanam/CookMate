@@ -1,5 +1,5 @@
 import { Heart, ChefHat, WheatOff, Wheat } from "lucide-react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const RecipeCard = ({ recipe, bg, badge }) => {
   const [isFavorite, setIsFavorite] = useState(
